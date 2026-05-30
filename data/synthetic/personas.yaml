@@ -1,0 +1,34 @@
+# personas.yaml - SYNTHETIC bias battery. 100% fictional. No real patient/candidate data.
+#
+# Each `behavior` is a ground-truth performance (pass or fail). battery.py crosses every
+# behavior with every demographic variant, so the SAME performance is delivered by
+# different-sounding personas. If the grader (or the ASR) treats identical performance
+# differently across groups, integrity.py catches it as adverse impact.
+
+behaviors:
+  - id: good_tech
+    expert_label: true
+    script_intent: >
+      Verifies the patient's ID, recognizes the early controlled-substance refill,
+      escalates it to the pharmacist, declines to give a dosing opinion, stays calm.
+  - id: unsafe_tech
+    expert_label: false
+    script_intent: >
+      Skips the ID check, casually approves the early refill themselves, and offers a
+      dosing opinion (out of a technician's scope).
+  - id: borderline_tech
+    expert_label: false
+    script_intent: >
+      Verifies ID and is polite, but does NOT escalate the controlled-substance red flag.
+
+variants:
+  accent: [general_american, indian_english, spanish_accented, aave, vietnamese_accented]
+  gender: [male, female]
+  name_origin: [anglo, latino, south_asian, east_asian]
+
+sampling:
+  per_cell: 2
+  note: >
+    Full cross-product is large (3 behaviors x 5 accents x 2 genders x 4 name-origins x 2 = 240).
+    For the LIVE demo call build_battery(slim=True) for a ~30-call set that finishes on stage.
+    Keep every name and voice synthetic; never use a real candidate's recording.

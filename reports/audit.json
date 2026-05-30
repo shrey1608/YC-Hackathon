@@ -1,0 +1,103 @@
+{
+  "n_performances": 960,
+  "fairness_cohort": "qualified",
+  "fairness_cohort_n": 320,
+  "reliability": {
+    "n": 960,
+    "agreement": 0.829,
+    "false_pass_rate": 0.0,
+    "false_fail_rate": 0.171
+  },
+  "fairness": {
+    "accent": {
+      "general_american": {
+        "pass_rate": 0.781,
+        "impact_ratio": 1.0,
+        "adverse_impact": false,
+        "n": 64
+      },
+      "indian_english": {
+        "pass_rate": 0.438,
+        "impact_ratio": 0.56,
+        "adverse_impact": true,
+        "n": 64
+      },
+      "spanish_accented": {
+        "pass_rate": 0.219,
+        "impact_ratio": 0.28,
+        "adverse_impact": true,
+        "n": 64
+      },
+      "aave": {
+        "pass_rate": 0.531,
+        "impact_ratio": 0.68,
+        "adverse_impact": true,
+        "n": 64
+      },
+      "vietnamese_accented": {
+        "pass_rate": 0.469,
+        "impact_ratio": 0.6,
+        "adverse_impact": true,
+        "n": 64
+      }
+    },
+    "gender": {
+      "male": {
+        "pass_rate": 0.487,
+        "impact_ratio": 1.0,
+        "adverse_impact": false,
+        "n": 160
+      },
+      "female": {
+        "pass_rate": 0.487,
+        "impact_ratio": 1.0,
+        "adverse_impact": false,
+        "n": 160
+      }
+    },
+    "name_origin": {
+      "anglo": {
+        "pass_rate": 0.575,
+        "impact_ratio": 1.0,
+        "adverse_impact": false,
+        "n": 80
+      },
+      "latino": {
+        "pass_rate": 0.425,
+        "impact_ratio": 0.739,
+        "adverse_impact": true,
+        "n": 80
+      },
+      "south_asian": {
+        "pass_rate": 0.45,
+        "impact_ratio": 0.783,
+        "adverse_impact": true,
+        "n": 80
+      },
+      "east_asian": {
+        "pass_rate": 0.5,
+        "impact_ratio": 0.87,
+        "adverse_impact": false,
+        "n": 80
+      }
+    }
+  },
+  "asr_bias": [
+    {
+      "group": "spanish_accented",
+      "avg_wer": 0.224,
+      "gap_vs_best": 0.175
+    },
+    {
+      "group": "indian_english",
+      "avg_wer": 0.18,
+      "gap_vs_best": 0.131
+    },
+    {
+      "group": "vietnamese_accented",
+      "avg_wer": 0.163,
+      "gap_vs_best": 0.114
+    }
+  ],
+  "verdict": "REVIEW - bias flagged"
+}

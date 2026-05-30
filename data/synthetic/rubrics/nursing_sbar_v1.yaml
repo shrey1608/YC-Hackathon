@@ -1,0 +1,23 @@
+id: nursing_sbar_v1
+title: Nursing — SBAR Handoff
+criteria:
+  - id: sbar_situation
+    name: Situation
+    description: States who the patient is and the immediate problem.
+    weight: 1.0
+    pass_threshold: 0.7
+  - id: sbar_background
+    name: Background
+    description: Provides relevant history and context.
+    weight: 1.0
+    pass_threshold: 0.7
+  - id: sbar_assessment
+    name: Assessment
+    description: Shares clinical assessment and concern level.
+    weight: 1.2
+    pass_threshold: 0.7
+  - id: sbar_recommendation
+    name: Recommendation
+    description: States clear ask or recommended action.
+    weight: 1.2
+    pass_threshold: 0.7

@@ -1,0 +1,17 @@
+{
+  "session_id": "syn-demo-pharmacy",
+  "scenario_id": "pharmacy_tech_metformin",
+  "created_at": "2026-05-30T12:00:00+00:00",
+  "synthetic_only": true,
+  "metadata": { "group": "en-US names" },
+  "turns": [
+    {
+      "role": "patient",
+      "text": "I'm picking up metformin. The bottle says take with food but my doctor said something different last week."
+    },
+    {
+      "role": "trainee",
+      "text": "I'll verify your prescription first. I understand the confusion — let me explain: metformin is usually taken with food to reduce side effects. I'll clarify this with the pharmacist right away."
+    }
+  ]
+}

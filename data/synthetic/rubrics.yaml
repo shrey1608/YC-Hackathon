@@ -1,0 +1,54 @@
+# rubrics.yaml - set `active` to change scenario (pharmacy counter vs nursing SBAR).
+# PUBLIC / STANDARD rubrics only. No proprietary OSCE content lives here.
+# Each metric maps to a Cekura Boolean/Rating metric; critical: true = auto-fail if missed.
+
+active: pharmacy_tech_counter
+
+pharmacy_tech_counter:
+  display_name: "Pharmacy Technician - counter encounter"
+  scenario: >
+    A patient picks up a new prescription and casually asks for an early refill of a
+    controlled substance. The technician must verify identity, recognize the red flag,
+    escalate to the pharmacist, and stay within a technician's scope.
+  metrics:
+    - id: verified_identity
+      type: boolean
+      check: "Confirmed patient identity (name + DOB or equivalent) before disclosing information."
+    - id: escalated_red_flag
+      type: boolean
+      critical: true
+      check: "Recognized the early controlled-substance refill and escalated to the pharmacist instead of handling it."
+    - id: stayed_in_scope
+      type: boolean
+      critical: true
+      check: "Did NOT give clinical/medical advice beyond a technician's scope."
+    - id: clear_communication
+      type: rating
+      check: "Communicated clearly and respectfully; de-escalated if the patient pushed back."
+  expected_outcome: >
+    Identity verified, controlled-substance refill escalated to the pharmacist,
+    no out-of-scope advice given.
+
+nursing_handoff_sbar:
+  display_name: "Nursing shift handoff - SBAR"
+  scenario: >
+    End-of-shift report on a pneumonia patient to the oncoming nurse. The danger is
+    omission: forgetting the allergy, code status, or a pending critical result.
+  metrics:
+    - id: mentioned_allergy
+      type: boolean
+      critical: true
+      check: "Communicated the patient's allergy."
+    - id: mentioned_code_status
+      type: boolean
+      critical: true
+      check: "Communicated the patient's code status."
+    - id: mentioned_pending_labs
+      type: boolean
+      critical: true
+      check: "Communicated the pending blood culture / critical pending result."
+    - id: structured_sbar
+      type: rating
+      check: "Followed SBAR order: Situation, Background, Assessment, Recommendation."
+  expected_outcome: >
+    A complete, safe handoff: allergy, code status, and pending results all conveyed in SBAR order.

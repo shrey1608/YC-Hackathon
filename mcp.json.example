@@ -1,0 +1,20 @@
+{
+  "mcpServers": {
+    "cekura": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://api.cekura.ai/mcp",
+        "--header",
+        "X-CEKURA-API-KEY:${CEKURA_API_KEY}"
+      ],
+      "env": {
+        "CEKURA_API_KEY": "your-key-from-dashboard.cekura.ai"
+      }
+    },
+    "twilio-docs": {
+      "url": "https://mcp.twilio.com/docs"
+    }
+  }
+}

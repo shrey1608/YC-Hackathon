@@ -1,0 +1,43 @@
+# FairBench runtime configuration
+
+environment: demo
+
+llm:
+  driver: nvidia_nemotron
+  endpoint_env: NEMOTRON_LLM_URL
+  api_key_env: NEMOTRON_LLM_API_KEY
+  model: nvidia/nemotron-3-super
+
+stt:
+  driver: nvidia_nemotron
+  endpoint_env: NVIDIA_ASR_URL
+
+tts:
+  driver: gradium
+  api_key_env: GRADIUM_API_KEY
+  voice: default
+
+telephony:
+  driver: twilio
+  account_sid_env: TWILIO_ACCOUNT_SID
+  auth_token_env: TWILIO_AUTH_TOKEN
+  phone_number_env: TWILIO_PHONE_NUMBER
+
+transport:
+  default: webrtc
+
+eval_battery:
+  driver: cekura
+  api_key_env: CEKURA_API_KEY
+  enabled: true
+
+integrity:
+  four_fifths_threshold: 0.80
+  reliability_min_kappa: 0.75
+  asr_wer_delta_threshold: 0.10
+
+data:
+  synthetic_only: true
+  rubrics_dir: data/synthetic/rubrics
+  personas_dir: data/synthetic/personas
+  labeled_turns: data/synthetic/labeled_turns.json

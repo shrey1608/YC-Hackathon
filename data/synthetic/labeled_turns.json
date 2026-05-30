@@ -1,0 +1,15 @@
+{
+  "description": "Hand-labeled synthetic turns for grader reliability — hackathon only",
+  "turns": [
+    { "predicted": 0.82, "gold": 0.85 },
+    { "predicted": 0.76, "gold": 0.80 },
+    { "predicted": 0.91, "gold": 0.88 },
+    { "predicted": 0.68, "gold": 0.72 },
+    { "predicted": 0.74, "gold": 0.70 },
+    { "predicted": 0.88, "gold": 0.90 },
+    { "predicted": 0.65, "gold": 0.68 },
+    { "predicted": 0.79, "gold": 0.77 },
+    { "predicted": 0.84, "gold": 0.86 },
+    { "predicted": 0.71, "gold": 0.75 }
+  ]
+}
