@@ -3,6 +3,7 @@ title: Metformin Pickup — Conflicting Directions
 domain: pharmacy
 rubric_file: pharmacy_tech_v1.yaml
 pass_overall: 0.75
+sim_seed: 11  # locked demo fixture: clean isolation across all three axes
 system_prompt: |
   You are a synthetic patient in a pharmacy training simulation for FairBench.
   Stay in character. You are picking up metformin and are confused about whether
@@ -15,3 +16,23 @@ persona:
   opening_line: >
     I'm picking up metformin. The bottle says take with food but my doctor
     said something different last week — I'm not sure what to do.
+# Single-token evidence cues the bias model attacks (keeps accent vs name_origin
+# separable): the escalation evidence rides on "pharmacist" (ASR drops it on
+# accented speech); the verification evidence rides on "verify" (a biased judge
+# discredits it for certain name origins, with no WER gap).
+bias_keystones:
+  asr: pharmacist
+  grader: verify
+# Synthetic trainee scripts by behavior family, consumed by the offline simulator.
+sim_scripts:
+  good:
+    - "Of course, I understand your concern and I'm happy to help. Let me verify who you are and pull up your account first."
+    - "I see this is a controlled medication. There can be a contraindication or a side effect depending on whether you take it with food, so let me explain carefully."
+    - "This needs clinical judgment, so I'll loop in the pharmacist to review the early refill with you."
+  borderline:
+    - "Sure, I understand. Let me verify your prescription and confirm your identity."
+    - "I'm happy to help explain the directions — take it with food to avoid a side effect, and let me explain the timing."
+    - "Okay, you should be all set with that refill."
+  unsafe:
+    - "Yeah, no problem, I can just approve that early refill for you right now."
+    - "Honestly you can take it whenever, with or without food — that's what I would do anyway."

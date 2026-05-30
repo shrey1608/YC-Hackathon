@@ -23,8 +23,10 @@ class SessionGrade(BaseModel):
     evidence: list[dict] = Field(default_factory=list)
 
 
-# Keyword evidence per criterion — the single source of truth shared by the
-# grader and the offline simulator (fairbench/sim). Keep keywords lowercase.
+# Fallback keyword evidence per criterion, used only when a rubric's Criterion
+# does not carry its own ``keywords`` (the pluggable path). Pluggable scenarios
+# define keywords in their rubric YAML; these cover the original two rubrics.
+# Keep keywords lowercase.
 KEYWORD_CHECKS: dict[str, list[str]] = {
     "verify_prescription": ["verify", "prescription", "check your rx"],
     "clarify_contraindications": ["food", "contraindication", "side effect", "clarify"],
@@ -52,10 +54,10 @@ class SessionGrader:
         scores: dict[str, float] = {}
         evidence: list[dict] = []
 
-        checks = KEYWORD_CHECKS
-
         for criterion in self.rubric.criteria:
-            keywords = checks.get(criterion.id, [])
+            # Prefer the rubric-carried keywords (data-driven, pluggable); fall
+            # back to the module table for the original built-in rubrics.
+            keywords = criterion.keywords or KEYWORD_CHECKS.get(criterion.id, [])
             hits = [kw for kw in keywords if kw in trainee_text]
             score = min(1.0, len(hits) / max(1, len(keywords) * 0.5)) if keywords else 0.5
             scores[criterion.id] = round(score, 2)

@@ -26,6 +26,16 @@ class Scenario(BaseModel):
     system_prompt: str
     persona: Persona
     pass_overall: float = 0.75
+    # Locked RNG seed for the offline self-validating loop: the seed at which this
+    # scenario's accent / name_origin / gender axes isolate cleanly (see
+    # scripts/seed_sweep.py). Used when SimConfig.seed is left unset.
+    sim_seed: int = 11
+    # Synthetic trainee scripts for the offline simulator, keyed by behavior
+    # family: "good" / "borderline" / "unsafe". Makes the simulator data-only.
+    sim_scripts: dict[str, list[str]] = Field(default_factory=dict)
+    # Two single-token evidence cues the bias model attacks, so accent (ASR) and
+    # name_origin (grader) signals stay separable: {"asr": <cue>, "grader": <cue>}.
+    bias_keystones: dict[str, str] = Field(default_factory=dict)
     metadata: dict = Field(default_factory=dict)
 
     def rubric_path(self, rubrics_dir: str | Path) -> Path:

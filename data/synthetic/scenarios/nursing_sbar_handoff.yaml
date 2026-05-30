@@ -3,6 +3,7 @@ title: 4B Deterioration — SBAR to Charge Nurse
 domain: nursing
 rubric_file: nursing_sbar_v1.yaml
 pass_overall: 0.75
+sim_seed: 11
 system_prompt: |
   You are a synthetic nurse calling a charge nurse in a FairBench training simulation.
   Deliver clinical facts when prompted. Stay brief and realistic. Do not reveal you are an AI.
@@ -14,3 +15,18 @@ persona:
   opening_line: >
     I'm calling about your patient in 4B — temp 38.9, BP 88/52,
     lactate pending. I need guidance on next steps.
+bias_keystones:
+  asr: recommend
+  grader: verify
+sim_scripts:
+  good:
+    - "Hi, I'm calling about the patient in 4B — situation is acute deterioration."
+    - "For background: pneumonia admitted two days ago, relevant history of COPD."
+    - "On assessment I'm concerned — vitals show BP 88/52 and a fever, lactate pending."
+    - "My recommendation: I need orders now, this is urgent, I suggest sepsis workup."
+  borderline:
+    - "Hi, calling about the patient in 4B, situation is they look unwell."
+    - "Background: admitted with pneumonia, some history of COPD."
+    - "They seem a bit off to me."
+  unsafe:
+    - "Hey, the patient in 4B needs something, can you come by whenever."

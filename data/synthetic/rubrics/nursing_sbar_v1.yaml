@@ -6,18 +6,22 @@ criteria:
     description: States who the patient is and the immediate problem.
     weight: 1.0
     pass_threshold: 0.7
+    keywords: ["calling about", "patient in", "situation"]
   - id: sbar_background
     name: Background
     description: Provides relevant history and context.
     weight: 1.0
     pass_threshold: 0.7
+    keywords: ["history", "admitted", "background"]
   - id: sbar_assessment
     name: Assessment
     description: Shares clinical assessment and concern level.
     weight: 1.2
     pass_threshold: 0.7
+    keywords: ["assess", "concerned", "vitals", "bp", "fever"]
   - id: sbar_recommendation
     name: Recommendation
     description: States clear ask or recommended action.
     weight: 1.2
     pass_threshold: 0.7
+    keywords: ["recommend", "suggest", "need orders", "urgent"]

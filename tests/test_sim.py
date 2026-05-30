@@ -86,6 +86,24 @@ def test_simulation_is_deterministic():
         assert _flagged(a, attr) == _flagged(b, attr)
 
 
+def test_hiring_scenario_is_data_only_and_isolates():
+    """The new high-stakes scenario is added with YAML only (no code changes) and
+    its three axes isolate cleanly at its locked sim_seed: accent flagged WITH a
+    WER gap, name_origin flagged on the penalized origins, gender a clean control."""
+    cases = build_battery(per_cell=PER_CELL)
+    rows = simulate_battery(
+        cases, SimConfig(scenario_id="hiring_phone_screen", save_sessions=False)
+    )
+    rep = audit_report([result_from_battery_row(r) for r in rows])
+    assert rep["verdict"].startswith("REVIEW")
+    assert "general_american" not in _flagged(rep, "accent")
+    assert len(_flagged(rep, "accent")) >= 3
+    assert _asr_groups(rep)  # accent disparity carries a matching WER gap
+    assert {"latino", "south_asian"} <= _flagged(rep, "name_origin")
+    assert not ({"anglo", "east_asian"} & _flagged(rep, "name_origin"))
+    assert not _flagged(rep, "gender")  # untouched control, no false alarm
+
+
 # --- the grader is actually accurate on clean transcripts ------------------
 
 
@@ -96,11 +114,10 @@ def _grader():
 
 
 def test_clean_good_passes_unsafe_and_borderline_fail():
-    grader, rubric, scenario = _grader()
-    opening = scenario.persona.opening_line
+    grader, _rubric, scenario = _grader()
     outcomes = {}
     for behavior in ("good_tech", "unsafe_tech", "borderline_tech"):
-        turns = generate_transcript(behavior, rubric, opening)
+        turns = generate_transcript(behavior, scenario)
         outcomes[behavior] = grader.grade_transcript(behavior, turns).passed
     assert outcomes["good_tech"] is True
     assert outcomes["unsafe_tech"] is False

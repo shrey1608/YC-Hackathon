@@ -32,10 +32,11 @@ def _project_root() -> Path:
     return Path(__file__).resolve().parents[2]
 
 
-# Two independent single-token evidence keystones in the "good" script
-# (see sim/transcripts.py). ASR error attacks the escalation cue; a biased judge
-# discredits the identity-verification cue. Separating them keeps the accent and
-# name_origin signals from interfering.
+# Fallback single-token evidence keystones when a scenario omits bias_keystones.
+# Two independent cues in the "good" script (see each scenario's sim_scripts):
+# ASR error attacks the asr cue; a biased judge discredits the grader cue.
+# Separating them keeps the accent and name_origin signals from interfering.
+# Pluggable scenarios set these in YAML (scenario.bias_keystones).
 ASR_KEYSTONE = "pharmacist"
 NAME_KEYSTONE = "verify"
 
@@ -49,7 +50,9 @@ DEFAULT_SIM_PER_CELL = 8
 @dataclass
 class SimConfig:
     scenario_id: str = "pharmacy_tech_metformin"
-    seed: int = 11  # locked demo fixture: clean isolation across all three axes
+    # None -> use the scenario's own locked sim_seed (data-driven per scenario);
+    # set an int to override. Keeps the bias model reproducible per scenario.
+    seed: int | None = None
     # Probability a *biased judge* discredits the escalation evidence for a
     # penalized name origin — a grader-bias mechanism distinct from ASR. Flows
     # through the real grader so it surfaces as name_origin adverse impact with
@@ -70,8 +73,9 @@ def _load_scenario_rubric(scenario_id: str) -> tuple[Scenario, Rubric]:
 
 def _rubric_keywords(rubric: Rubric) -> set[str]:
     kws: set[str] = set()
-    for crit in rubric.criterion_ids():
-        for kw in KEYWORD_CHECKS.get(crit, []):
+    for crit in rubric.criteria:
+        # data-driven keywords first; fall back to the module table
+        for kw in (crit.keywords or KEYWORD_CHECKS.get(crit.id, [])):
             kws.update(kw.split())
     return kws
 
@@ -113,7 +117,9 @@ def simulate_battery(cases: list[dict], config: SimConfig | None = None) -> list
     scenario, rubric = _load_scenario_rubric(config.scenario_id)
     grader = SessionGrader(scenario, rubric)
     keywords = _rubric_keywords(rubric)
-    opening = scenario.persona.opening_line
+    grader_keystone = scenario.bias_keystones.get("grader") or NAME_KEYSTONE
+    # None -> the scenario's locked seed; an explicit int overrides it.
+    base_seed = config.seed if config.seed is not None else scenario.sim_seed
 
     rows: list[dict] = []
     saved_accents: set[str] = set()
@@ -129,10 +135,10 @@ def simulate_battery(cases: list[dict], config: SimConfig | None = None) -> list
         # negative control — demonstrating the audit flags only where bias exists.
         rep = case["persona_id"].rsplit("__", 1)[-1]
         seed_key = f"{behavior}|{accent}|{name_origin}|{rep}"
-        seed = (zlib.crc32(seed_key.encode()) ^ config.seed) & 0xFFFFFFFF
+        seed = (zlib.crc32(seed_key.encode()) ^ base_seed) & 0xFFFFFFFF
         rng = random.Random(seed)
 
-        clean_turns = generate_transcript(behavior, rubric, opening, persona_name=name_origin)
+        clean_turns = generate_transcript(behavior, scenario, persona_name=name_origin)
         wer = accent_wer(accent) if config.asr_enabled else 0.0
         graded_turns, realized_wer = _degrade_turns(clean_turns, wer, rng, keywords)
 
@@ -144,7 +150,7 @@ def simulate_battery(cases: list[dict], config: SimConfig | None = None) -> list
             and rng.random() < config.grader_name_bias_rate
         )
         if judge_biased:
-            graded_turns = _strip_keyword(graded_turns, NAME_KEYSTONE)
+            graded_turns = _strip_keyword(graded_turns, grader_keystone)
 
         grade = grader.grade_transcript(case["persona_id"], graded_turns)
 

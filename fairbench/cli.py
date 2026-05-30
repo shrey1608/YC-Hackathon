@@ -116,7 +116,7 @@ def _add_audit_args(p: argparse.ArgumentParser) -> None:
     p.add_argument("--live", action="store_true", help="Route through the eval provider (Cekura if keyed)")
     p.add_argument("--agent-url", default="http://localhost:7860", dest="agent_url")
     p.add_argument("--scenario", default="pharmacy_tech_metformin", help="Scenario id for the sim")
-    p.add_argument("--seed", type=int, default=11, help="Sim RNG seed")
+    p.add_argument("--seed", type=int, default=None, help="Sim RNG seed (default: scenario sim_seed)")
     p.add_argument("--per-cell", type=int, default=8, dest="per_cell", help="Sim repeats per cell")
     p.add_argument("--output", default="reports/audit.md")
 
@@ -137,7 +137,7 @@ def main() -> None:
 
     p_demo = sub.add_parser("demo", help="One-command offline self-validating demo")
     p_demo.add_argument("--scenario", default="pharmacy_tech_metformin")
-    p_demo.add_argument("--seed", type=int, default=11)
+    p_demo.add_argument("--seed", type=int, default=None)
     p_demo.add_argument("--per-cell", type=int, default=8, dest="per_cell")
     p_demo.add_argument("--output", default="reports/audit.md")
     p_demo.set_defaults(func=cmd_demo)

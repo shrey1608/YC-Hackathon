@@ -14,6 +14,9 @@ class Criterion(BaseModel):
     description: str
     weight: float = 1.0
     pass_threshold: float = 0.7
+    # Lowercase keyword evidence the grader keys on. Carried by the rubric so a
+    # scenario is fully data-defined; falls back to grader.KEYWORD_CHECKS when empty.
+    keywords: list[str] = Field(default_factory=list)
 
 
 class Rubric(BaseModel):

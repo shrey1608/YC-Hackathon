@@ -1,0 +1,30 @@
+id: hiring_screen_v1
+title: Hiring Phone Screen — Structured & Compliant
+# A recruiter's phone screen is a "selection procedure" under the EEOC Uniform
+# Guidelines, so a pass/fail disparity across protected groups (the 4/5ths rule)
+# is legally consequential. These competencies assess the interviewer (trainee).
+criteria:
+  - id: verify_candidate
+    name: Verify candidate
+    description: Confirms they are speaking with the right candidate before screening.
+    weight: 1.0
+    pass_threshold: 0.7
+    keywords: ["verify", "confirm identity", "correct candidate"]
+  - id: ask_structured_questions
+    name: Ask structured questions
+    description: Uses the same standardized, structured question set for every candidate.
+    weight: 1.2
+    pass_threshold: 0.7
+    keywords: ["structured", "standardized", "same set of questions"]
+  - id: evaluate_job_criteria
+    name: Evaluate job criteria
+    description: Assesses experience, skills, and qualifications against the role.
+    weight: 1.0
+    pass_threshold: 0.7
+    keywords: ["experience", "skills", "qualifications", "job"]
+  - id: avoid_prohibited_questions
+    name: Avoid prohibited questions
+    description: Keeps questions job-related; avoids age, family status, and protected topics.
+    weight: 1.0
+    pass_threshold: 0.7
+    keywords: ["job-related", "relevant to the role", "appropriate"]

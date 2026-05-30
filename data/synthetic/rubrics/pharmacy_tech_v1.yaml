@@ -6,18 +6,22 @@ criteria:
     description: Confirms Rx identity and patient before counseling.
     weight: 1.0
     pass_threshold: 0.7
+    keywords: ["verify", "prescription", "check your rx"]
   - id: clarify_contraindications
     name: Clarify directions and risks
     description: Addresses food timing, side effects, or conflicting instructions.
     weight: 1.0
     pass_threshold: 0.7
+    keywords: ["food", "contraindication", "side effect", "clarify"]
   - id: empathy_and_clarity
     name: Empathy and clarity
     description: Uses clear, patient-centered language.
     weight: 0.8
     pass_threshold: 0.7
+    keywords: ["understand", "happy to help", "let me explain"]
   - id: escalate_to_pharmacist
     name: Escalate to pharmacist
     description: Involves pharmacist when clinical judgment is required.
     weight: 1.2
     pass_threshold: 0.7
+    keywords: ["pharmacist", "escalate", "ask the pharmacist"]

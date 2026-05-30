@@ -60,7 +60,7 @@ async def run_text_demo() -> None:
     llm = create_llm(cfg)
     behavior = os.environ.get("FAIRBENCH_BEHAVIOR", "good_tech")
 
-    scripted = generate_transcript(behavior, rubric, scenario.persona.opening_line)
+    scripted = generate_transcript(behavior, scenario)
     print(f"\n=== FairBench | {scenario.title} | behavior={behavior} ===\n")
 
     turns: list[dict] = []
@@ -81,12 +81,17 @@ async def run_text_demo() -> None:
 
 
 def run_pipecat() -> None:
-    """Full voice pipeline — requires pipecat-ai and sponsor credentials."""
+    """Full voice pipeline — launches the Pipecat dev runner on :7860.
+
+    The runner serves a built-in WebRTC UI; open it, pick WebRTC, and speak. On
+    hang-up the transcript is graded and saved. Falls back to the offline text
+    demo when pipecat or the Gradium key is absent.
+    """
     try:
         import pipecat  # noqa: F401
     except ImportError:
         print(
-            'Pipecat not installed. Run: pip install -e ".[bot]" and pipecat-ai[gradium].\n'
+            'Pipecat not installed. Run: pip install -e ".[bot,server]".\n'
             "Falling back to text demo.\n",
             file=sys.stderr,
         )
@@ -98,11 +103,19 @@ def run_pipecat() -> None:
         asyncio.run(run_text_demo())
         return
 
-    from fairbench.bot.pipeline import run_voice_bot
-
-    scenario, rubric, _cfg = load_active_scenario()
+    scenario, _rubric, _cfg = load_active_scenario()
     print(f"=== FairBench live voice | {scenario.title} ===")
-    asyncio.run(run_voice_bot(scenario, rubric))
+    print("Pipecat dev runner -> http://localhost:7860  (open it, choose WebRTC, then speak)")
+
+    # Bind our bot() to the runner: pipecat's _get_bot_module() checks the
+    # __main__ module for a `bot` attribute first, so inject it there.
+    from fairbench.bot.pipeline import bot
+
+    sys.modules["__main__"].bot = bot
+
+    from pipecat.runner.run import main as runner_main
+
+    runner_main()
 
 
 def main() -> None:

@@ -67,11 +67,15 @@ def make_tts(voice: str | None = None):
 
 
 def make_transport(transport: str | None = None, **kwargs):
-    """SmallWebRTC for local browser; Twilio websocket for telephony."""
+    """SmallWebRTC for the local browser; Twilio websocket for telephony.
+
+    pipecat >= 1.3 API: SmallWebRTC takes a webrtc_connection (supplied by the
+    server's /api/offer handler or the dev runner) and a TransportParams.
+    """
     transport = (transport or os.environ.get("FAIRBENCH_TRANSPORT", "webrtc")).lower()
     if transport == "twilio":
         from pipecat.serializers.twilio import TwilioFrameSerializer
-        from pipecat.transports.network.fastapi_websocket import (
+        from pipecat.transports.websocket.fastapi import (
             FastAPIWebsocketParams,
             FastAPIWebsocketTransport,
         )
@@ -82,18 +86,23 @@ def make_transport(transport: str | None = None, **kwargs):
             params=FastAPIWebsocketParams(
                 audio_in_enabled=True,
                 audio_out_enabled=True,
+                add_wav_header=False,
                 serializer=TwilioFrameSerializer(
                     stream_sid=kwargs.get("stream_sid"),
                     call_sid=kwargs.get("call_sid"),
-                    account_sid=os.environ["TWILIO_ACCOUNT_SID"],
-                    auth_token=os.environ["TWILIO_AUTH_TOKEN"],
+                    account_sid=os.environ.get("TWILIO_ACCOUNT_SID", ""),
+                    auth_token=os.environ.get("TWILIO_AUTH_TOKEN", ""),
                 ),
             ),
         )
 
-    from pipecat.transports.network.small_webrtc import SmallWebRTCTransport
+    from pipecat.transports.base_transport import TransportParams
+    from pipecat.transports.smallwebrtc.transport import SmallWebRTCTransport
 
-    return SmallWebRTCTransport(**kwargs)
+    return SmallWebRTCTransport(
+        webrtc_connection=kwargs["webrtc_connection"],
+        params=TransportParams(audio_in_enabled=True, audio_out_enabled=True),
+    )
 
 
 class EvalProvider(ABC):
