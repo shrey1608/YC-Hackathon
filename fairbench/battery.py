@@ -14,6 +14,20 @@ import yaml
 
 DEFAULT_PERSONAS = Path(__file__).resolve().parents[1] / "data" / "synthetic" / "personas.yaml"
 
+# Full cross-product size (3 behaviors × 5 accents × 2 genders × 4 name-origins).
+_BATTERY_CELLS = 120
+
+
+def per_cell_for_scenario(scenario_id: str) -> int:
+    """Stable repeat count per scenario so each run has a different but reproducible
+    call volume (720–1,680 on the full battery grid)."""
+    n = sum((i + 1) * ord(c) for i, c in enumerate(scenario_id))
+    return 6 + (n % 9)
+
+
+def expected_battery_calls(scenario_id: str) -> int:
+    return _BATTERY_CELLS * per_cell_for_scenario(scenario_id)
+
 
 def build_battery(
     personas_path: str | Path | None = None,

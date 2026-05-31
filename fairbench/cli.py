@@ -102,6 +102,54 @@ def cmd_demo(args: argparse.Namespace) -> None:
     print("Dashboard: cd dashboard && npm install && npm run dev")
 
 
+def _scenario_path(scenario_id: str) -> Path:
+    return _project_root() / "data" / "synthetic" / "scenarios" / f"{scenario_id}.yaml"
+
+
+def cmd_cekura(args: argparse.Namespace) -> None:
+    """Cekura live path: fetch a completed result, or create+start a run."""
+    from fairbench.adapters.eval.cekura import CekuraClient, map_runs
+
+    client = CekuraClient()
+    if not client.api_key:
+        raise SystemExit("CEKURA_API_KEY not set — add it to .env first.")
+
+    if args.cekura_cmd == "fetch":
+        rows = client.result_rows(args.result_id)
+        report = audit_report([result_from_battery_row(r) for r in rows])
+        report["source"] = "cekura"
+        out = _project_root() / args.output
+        save_audit(report, out)
+        print(f"Cekura result {args.result_id} -> {report['verdict']}  ({out})")
+        _print_flags(report)
+        return
+
+    # run: create agent + accent personalities + scenario, then start a pipecat run.
+    from fairbench.core.scenario import load_scenario
+
+    scenario = load_scenario(_scenario_path(args.scenario))
+    accents = sorted({c["group"]["accent"] for c in build_battery(slim=True)})
+    print(f"Cekura run: agent={args.agent_url} scenario={scenario.id} accents={accents}")
+    result_id = client.run_accent_battery(
+        agent_url=args.agent_url,
+        accents=accents,
+        scenario_name=scenario.title,
+        scenario_prompt=scenario.system_prompt,
+        agent_name=f"FairBench {scenario.id}",
+    )
+    print(f"result_id={result_id}")
+    if not args.wait:
+        print("Poll later with: fairbench cekura fetch", result_id)
+        return
+    print("waiting for completion…")
+    rows = map_runs(client.poll_result(result_id))
+    report = audit_report([result_from_battery_row(r) for r in rows])
+    report["source"] = "cekura"
+    save_audit(report, _project_root() / args.output)
+    print(f"Verdict: {report['verdict']}")
+    _print_flags(report)
+
+
 def _cmd_rubric() -> None:
     key, block = active_rubric()
     print(f"active: {key}")
@@ -145,6 +193,23 @@ def main() -> None:
     p_rub = sub.add_parser("rubric", help="Show active rubric from rubrics.yaml")
     p_rub.set_defaults(func=lambda a: _cmd_rubric())
 
+    p_cek = sub.add_parser("cekura", help="Cekura live run / fetch -> integrity audit")
+    cek_sub = p_cek.add_subparsers(dest="cekura_cmd", required=True)
+    p_fetch = cek_sub.add_parser("fetch", help="Fetch a completed result id and audit it")
+    p_fetch.add_argument("result_id")
+    p_fetch.add_argument("--output", default="reports/audit.md")
+    p_run = cek_sub.add_parser("run", help="Create + start a pipecat accent battery")
+    p_run.add_argument(
+        "--agent-url",
+        dest="agent_url",
+        required=True,
+        help="Public endpoint Cekura will call (Pipecat Cloud / Twilio, not localhost)",
+    )
+    p_run.add_argument("--scenario", default="pharmacy_tech_metformin")
+    p_run.add_argument("--wait", action="store_true", help="Poll until complete, then audit")
+    p_run.add_argument("--output", default="reports/audit.md")
+    p_cek.set_defaults(func=cmd_cekura)
+
     args = parser.parse_args()
     args.func(args)
 
@@ -155,7 +220,7 @@ def audit_main() -> None:
 
     if len(sys.argv) <= 1:
         sys.argv = [sys.argv[0], "audit"]
-    elif sys.argv[1] not in ("audit", "battery", "rubric", "demo"):
+    elif sys.argv[1] not in ("audit", "battery", "rubric", "demo", "cekura"):
         sys.argv.insert(1, "audit")
     main()
 

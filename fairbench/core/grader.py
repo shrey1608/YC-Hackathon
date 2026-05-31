@@ -39,6 +39,56 @@ KEYWORD_CHECKS: dict[str, list[str]] = {
 }
 
 
+# Short, actionable coaching nudges per criterion for live (per-turn) feedback.
+# Falls back to the criterion's display name when a criterion isn't listed.
+COACHING_HINTS: dict[str, str] = {
+    "verify_prescription": "Confirm the prescription/Rx details before you advise.",
+    "clarify_contraindications": "Ask about food and other meds, and flag any interaction.",
+    "empathy_and_clarity": "Acknowledge the patient and explain it in plain language.",
+    "escalate_to_pharmacist": "Offer to bring in the pharmacist for the clinical question.",
+    "sbar_situation": "State the situation: who the patient is and why you're calling.",
+    "sbar_background": "Give the relevant background/history.",
+    "sbar_assessment": "Share your assessment — vitals, what's concerning you.",
+    "sbar_recommendation": "Make a clear recommendation or ask for specific orders.",
+}
+
+
+def live_feedback(grade: SessionGrade, rubric: Rubric) -> dict:
+    """Turn a (cumulative) grade into immediate coaching for the live call.
+
+    Buckets each rubric criterion as met / partial / unmet, then surfaces ONE
+    next action — the highest-weight criterion not yet met — so the trainee gets
+    a single, specific nudge after every turn instead of a wall of scores.
+    """
+    scores = grade.competency_scores
+    met = [c for c, s in scores.items() if s >= 0.66]
+    partial = [c for c, s in scores.items() if 0.34 <= s < 0.66]
+    unmet = [c for c, s in scores.items() if s < 0.34]
+
+    weight = {c.id: c.weight for c in rubric.criteria}
+    name = {c.id: c.name for c in rubric.criteria}
+    candidates = unmet or partial
+    target = max(candidates, key=lambda c: weight.get(c, 1.0)) if candidates else None
+    if target:
+        hint = COACHING_HINTS.get(target) or (
+            f"Work in: {name.get(target, target).replace('_', ' ')}."
+        )
+    else:
+        hint = "Strong — every competency is on track. Wrap up cleanly."
+
+    return {
+        "overall": grade.overall,
+        "passed": grade.passed,
+        "scores": scores,
+        "met": met,
+        "partial": partial,
+        "unmet": unmet,
+        "target": target,
+        "hint": hint,
+        "criteria_names": name,
+    }
+
+
 class SessionGrader:
     """Scores trainee turns against the active rubric."""
 

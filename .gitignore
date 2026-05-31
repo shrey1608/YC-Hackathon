@@ -27,3 +27,8 @@ reports/*.pdf
 node_modules/
 .next/
 out/
+*.tsbuildinfo
+
+# transient logs
+*_log.txt
+*.log

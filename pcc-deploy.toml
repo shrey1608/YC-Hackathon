@@ -1,0 +1,25 @@
+# Pipecat Cloud deploy template for the FairBench voice agent.
+# Docs: https://docs.pipecat.daily.co  ·  Deploy:  pip install pipecatcloud && pcc deploy
+#
+# This is a starting point — set `image` to your pushed container and create the
+# secret set before deploying. The bot entrypoint is fairbench.bot.pipeline:bot
+# (Pipecat runner), which already branches WebRTC (browser) vs WebSocket (Twilio).
+
+agent_name = "fairbench-voice"
+
+# Build & push your own image, then reference it here, e.g.:
+#   docker build -t <registry>/fairbench-voice:0.1 .
+#   docker push   <registry>/fairbench-voice:0.1
+image = "<registry>/fairbench-voice:0.1"
+
+# Secrets live in Pipecat Cloud, never in git:
+#   pcc secrets set fairbench-secrets \
+#     GRADIUM_API_KEY=... NVIDIA_ASR_URL=... NEMOTRON_LLM_URL=... \
+#     NEMOTRON_LLM_MODEL=nvidia/nemotron-3-super \
+#     TWILIO_ACCOUNT_SID=... TWILIO_AUTH_TOKEN=... TWILIO_PHONE_NUMBER=...
+secret_set = "fairbench-secrets"
+
+[scaling]
+# Scale to zero between demos; one warm agent is plenty for a phone line.
+min_agents = 0
+max_agents = 1

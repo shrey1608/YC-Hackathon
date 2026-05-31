@@ -1,103 +1,104 @@
 {
-  "n_performances": 960,
+  "n_performances": 1920,
   "fairness_cohort": "qualified",
-  "fairness_cohort_n": 320,
+  "fairness_cohort_n": 640,
   "reliability": {
-    "n": 960,
-    "agreement": 0.829,
+    "n": 1920,
+    "agreement": 0.847,
     "false_pass_rate": 0.0,
-    "false_fail_rate": 0.171
+    "false_fail_rate": 0.153
   },
   "fairness": {
     "accent": {
       "general_american": {
-        "pass_rate": 0.781,
+        "pass_rate": 0.875,
         "impact_ratio": 1.0,
         "adverse_impact": false,
-        "n": 64
+        "n": 128
       },
       "indian_english": {
-        "pass_rate": 0.438,
-        "impact_ratio": 0.56,
+        "pass_rate": 0.484,
+        "impact_ratio": 0.554,
         "adverse_impact": true,
-        "n": 64
+        "n": 128
       },
       "spanish_accented": {
-        "pass_rate": 0.219,
-        "impact_ratio": 0.28,
+        "pass_rate": 0.25,
+        "impact_ratio": 0.286,
         "adverse_impact": true,
-        "n": 64
+        "n": 128
       },
       "aave": {
-        "pass_rate": 0.531,
-        "impact_ratio": 0.68,
+        "pass_rate": 0.578,
+        "impact_ratio": 0.661,
         "adverse_impact": true,
-        "n": 64
+        "n": 128
       },
       "vietnamese_accented": {
-        "pass_rate": 0.469,
-        "impact_ratio": 0.6,
+        "pass_rate": 0.516,
+        "impact_ratio": 0.589,
         "adverse_impact": true,
-        "n": 64
+        "n": 128
       }
     },
     "gender": {
       "male": {
-        "pass_rate": 0.487,
+        "pass_rate": 0.541,
         "impact_ratio": 1.0,
         "adverse_impact": false,
-        "n": 160
+        "n": 320
       },
       "female": {
-        "pass_rate": 0.487,
+        "pass_rate": 0.541,
         "impact_ratio": 1.0,
         "adverse_impact": false,
-        "n": 160
+        "n": 320
       }
     },
     "name_origin": {
       "anglo": {
+        "pass_rate": 0.487,
+        "impact_ratio": 0.848,
+        "adverse_impact": false,
+        "n": 160
+      },
+      "latino": {
+        "pass_rate": 0.562,
+        "impact_ratio": 0.978,
+        "adverse_impact": false,
+        "n": 160
+      },
+      "south_asian": {
+        "pass_rate": 0.537,
+        "impact_ratio": 0.935,
+        "adverse_impact": false,
+        "n": 160
+      },
+      "east_asian": {
         "pass_rate": 0.575,
         "impact_ratio": 1.0,
         "adverse_impact": false,
-        "n": 80
-      },
-      "latino": {
-        "pass_rate": 0.425,
-        "impact_ratio": 0.739,
-        "adverse_impact": true,
-        "n": 80
-      },
-      "south_asian": {
-        "pass_rate": 0.45,
-        "impact_ratio": 0.783,
-        "adverse_impact": true,
-        "n": 80
-      },
-      "east_asian": {
-        "pass_rate": 0.5,
-        "impact_ratio": 0.87,
-        "adverse_impact": false,
-        "n": 80
+        "n": 160
       }
     }
   },
   "asr_bias": [
     {
       "group": "spanish_accented",
-      "avg_wer": 0.224,
-      "gap_vs_best": 0.175
+      "avg_wer": 0.219,
+      "gap_vs_best": 0.168
     },
     {
       "group": "indian_english",
-      "avg_wer": 0.18,
-      "gap_vs_best": 0.131
+      "avg_wer": 0.185,
+      "gap_vs_best": 0.134
     },
     {
       "group": "vietnamese_accented",
-      "avg_wer": 0.163,
-      "gap_vs_best": 0.114
+      "avg_wer": 0.159,
+      "gap_vs_best": 0.108
     }
   ],
-  "verdict": "REVIEW - bias flagged"
+  "verdict": "REVIEW - bias flagged",
+  "scenario": "pharmacy_tech_metformin"
 }

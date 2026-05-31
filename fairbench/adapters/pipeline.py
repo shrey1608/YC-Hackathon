@@ -54,15 +54,24 @@ def make_stt():
 
 
 def make_tts(voice: str | None = None):
-    """Gradium TTS."""
+    """Gradium TTS.
+
+    Gradium expects a concrete voice **ID** (e.g. ``Eu9iL_CYe8N-Gkx_``), not a
+    human description. Scenario ``persona.voice_hint`` values are descriptions like
+    "friendly, professional", which Gradium rejects with "Embeddings not found".
+    So a hint is only honored when it looks like an ID (no spaces/commas);
+    otherwise we fall back to the configured GRADIUM_VOICE_ID.
+    """
     from pipecat.services.gradium.tts import GradiumTTSService
 
-    voice = voice or os.environ.get("GRADIUM_VOICE_ID") or load_config().tts.voice
+    default_voice = (
+        os.environ.get("GRADIUM_VOICE_ID") or load_config().tts.voice or "Eu9iL_CYe8N-Gkx_"
+    )
+    looks_like_id = bool(voice) and " " not in voice and "," not in voice
+    voice_id = voice if looks_like_id else default_voice
     return GradiumTTSService(
         api_key=os.environ["GRADIUM_API_KEY"],
-        settings=GradiumTTSService.Settings(
-            voice=voice or "Eu9iL_CYe8N-Gkx_",
-        ),
+        settings=GradiumTTSService.Settings(voice=voice_id),
     )
 
 

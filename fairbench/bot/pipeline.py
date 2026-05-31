@@ -58,7 +58,7 @@ def context_to_turns(messages: list[dict]) -> list[dict]:
 def build_worker(scenario: Scenario, rubric: Rubric, transport):
     """Assemble the PipelineWorker and wire greeting + grade-on-hangup."""
     from pipecat.audio.vad.silero import SileroVADAnalyzer
-    from pipecat.frames.frames import LLMRunFrame
+    from pipecat.frames.frames import TTSSpeakFrame
     from pipecat.pipeline.pipeline import Pipeline
     from pipecat.pipeline.worker import PipelineParams, PipelineWorker
     from pipecat.processors.aggregators.llm_context import LLMContext
@@ -99,9 +99,11 @@ def build_worker(scenario: Scenario, rubric: Rubric, transport):
 
     @worker.rtvi.event_handler("on_client_ready")
     async def _on_client_ready(*_args):  # noqa: ANN002
-        # The patient opens the encounter, then we kick off the LLM turn.
+        # Speak the scripted opening line, then WAIT for the trainee. Running the
+        # LLM here (instead of speaking the line) makes the agent monologue right
+        # past its greeting, so the human never gets a turn.
         context.add_message({"role": "assistant", "content": scenario.persona.opening_line})
-        await worker.queue_frames([LLMRunFrame()])
+        await worker.queue_frames([TTSSpeakFrame(scenario.persona.opening_line)])
 
     @transport.event_handler("on_client_disconnected")
     async def _on_client_disconnected(*_args):  # noqa: ANN002
