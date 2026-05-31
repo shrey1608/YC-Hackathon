@@ -9,6 +9,12 @@ Built on **Pipecat** (voice), **NVIDIA Nemotron** (open‑weights ASR + LLM),
 **Gradium** (TTS), **Twilio** (phone), and **Cekura** (live‑call testing).
 Runs end‑to‑end with **no API keys** on synthetic, public test personas.
 
+## Live demo
+
+**Console:** https://shelterless-ultrasonically-wes.ngrok-free.dev
+
+This tunnels the local dashboard while `./scripts/dev.ps1` is running (`ngrok http 3000`). For Twilio phone calls, tunnel the API instead (`ngrok http 8000`) and set `PUBLIC_BASE_URL` in `.env` to that https URL.
+
 ## The problem
 
 Voice AI now **scores people** — recruiter phone screens, clinical skill checks,
