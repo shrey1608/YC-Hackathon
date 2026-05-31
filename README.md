@@ -9,8 +9,6 @@ Built on **Pipecat** (voice), **NVIDIA Nemotron** (open‑weights ASR + LLM),
 **Gradium** (TTS), **Twilio** (phone), and **Cekura** (live‑call testing).
 Runs end‑to‑end with **no API keys** on synthetic, public test personas.
 
----
-
 ## The problem
 
 Voice AI now **scores people** — recruiter phone screens, clinical skill checks,
@@ -42,7 +40,7 @@ so you fix the right thing. It **proves itself offline with no keys**, and the
 
 ## Demo
 
-> ▶ **[Watch the demo](demo.mp4)** — *replace with your hosted link (YouTube/Loom).*
+**[▶ Watch the demo video](demo.mp4)** — ~60s walkthrough of the console (Cekura battery → bias audit → Improve before/after).
 
 You hear the **same competent answer in two different voices** — then watch the
 agent pass one and fail the other on identical words. That gap is the product:
@@ -195,9 +193,9 @@ fairbench-server                          # API on http://localhost:8000
 cd dashboard; npm install; npm run dev    # dashboard on http://localhost:3000
 ```
 
-Then open **http://localhost:3000**. The dashboard proxies `/api/*` to the
-backend, so there's no CORS setup. Even with the backend down it still shows the
-last saved audit, so you always see something real.
+Then open **http://localhost:3000**. The dashboard proxies
+`/api/*` to the backend, so there's no CORS setup. Even with the backend down it
+still shows the last saved audit, so you always see something real.
 
 > New to the terminology? Every screen has tooltips, and the console header has a
 > **"What do these terms mean?"** glossary that explains every term in plain English.
